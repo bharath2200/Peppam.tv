@@ -19,15 +19,23 @@
             --orange-dim: rgba(255, 102, 0, 0.18);
             --bar-bg: rgba(255, 255, 255, 0.18);
             --bar-buffer: rgba(255, 255, 255, 0.38);
-            --ctrl-bg: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.55) 60%, transparent 100%);
+            --ctrl-bg: linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.55) 60%, transparent 100%);
             --ctrl-height: 52px;
             --radius: 10px;
         }
 
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-        body, html {
-            width: 100%; height: 100%;
+        body,
+        html {
+            width: 100%;
+            height: 100%;
             background: #000;
             display: flex;
             justify-content: center;
@@ -45,7 +53,7 @@
             position: relative;
             border-radius: var(--radius);
             overflow: hidden;
-            box-shadow: 0 0 40px rgba(255,102,0,0.15);
+            box-shadow: 0 0 40px rgba(255, 102, 0, 0.15);
         }
 
         /* ── Video.js base overrides ── */
@@ -61,7 +69,7 @@
             width: 72px !important;
             height: 72px !important;
             border-radius: 50% !important;
-            background: rgba(255,102,0,0.88) !important;
+            background: rgba(255, 102, 0, 0.88) !important;
             border: 3px solid var(--orange) !important;
             color: #fff !important;
             font-size: 1.6rem !important;
@@ -70,13 +78,14 @@
             left: 50% !important;
             margin: -36px 0 0 -36px !important;
             transition: transform 0.2s, box-shadow 0.2s, background 0.2s !important;
-            box-shadow: 0 0 30px rgba(255,102,0,0.55) !important;
+            box-shadow: 0 0 30px rgba(255, 102, 0, 0.55) !important;
         }
+
         .video-js:hover .vjs-big-play-button,
         .video-js .vjs-big-play-button:focus {
             background: var(--orange) !important;
             transform: scale(1.1) !important;
-            box-shadow: 0 0 45px rgba(255,102,0,0.8) !important;
+            box-shadow: 0 0 45px rgba(255, 102, 0, 0.8) !important;
         }
 
         /* ── Control Bar ── */
@@ -121,6 +130,7 @@
             background: var(--bar-buffer) !important;
             border-radius: 4px !important;
         }
+
         .video-js .vjs-load-progress div {
             background: var(--bar-buffer) !important;
         }
@@ -143,9 +153,10 @@
             height: 14px !important;
             background: var(--orange) !important;
             border-radius: 50% !important;
-            box-shadow: 0 0 6px rgba(255,102,0,0.7) !important;
+            box-shadow: 0 0 6px rgba(255, 102, 0, 0.7) !important;
             font-size: 0 !important;
         }
+
         .video-js .vjs-progress-control:hover .vjs-play-progress::before {
             width: 16px !important;
             height: 16px !important;
@@ -155,7 +166,7 @@
         /* Tooltip */
         .video-js .vjs-mouse-display .vjs-time-tooltip,
         .video-js .vjs-play-progress .vjs-time-tooltip {
-            background: rgba(0,0,0,0.8) !important;
+            background: rgba(0, 0, 0, 0.8) !important;
             color: #fff !important;
             font-size: 11px !important;
             font-family: 'Poppins', sans-serif !important;
@@ -170,8 +181,14 @@
             color: #e8e8e8 !important;
             transition: color 0.18s !important;
         }
-        .video-js .vjs-button:hover { color: var(--orange) !important; }
-        .video-js .vjs-button > .vjs-icon-placeholder::before { font-size: 1.5rem !important; }
+
+        .video-js .vjs-button:hover {
+            color: var(--orange) !important;
+        }
+
+        .video-js .vjs-button>.vjs-icon-placeholder::before {
+            font-size: 1.5rem !important;
+        }
 
         /* ── Volume Panel ── */
         .video-js .vjs-volume-panel {
@@ -180,20 +197,24 @@
             width: auto !important;
             flex: 0 0 auto !important;
         }
+
         .video-js .vjs-volume-panel.vjs-volume-panel-horizontal.vjs-hover,
         .video-js .vjs-volume-panel.vjs-volume-panel-horizontal:focus-within {
             width: 90px !important;
         }
+
         .video-js .vjs-volume-bar {
             background: var(--bar-bg) !important;
             border-radius: 4px !important;
             height: 4px !important;
             margin: 0 4px !important;
         }
+
         .video-js .vjs-volume-level {
             background: var(--orange) !important;
             border-radius: 4px !important;
         }
+
         .video-js .vjs-volume-level::before {
             font-size: 0.75em !important;
             color: var(--orange) !important;
@@ -212,12 +233,16 @@
             letter-spacing: 0.02em !important;
             white-space: nowrap !important;
         }
+
         .video-js .vjs-time-divider {
             padding: 0 1px !important;
             color: #888 !important;
             min-width: 8px !important;
         }
-        .video-js .vjs-remaining-time { color: #aaa !important; }
+
+        .video-js .vjs-remaining-time {
+            color: #aaa !important;
+        }
 
         /* ── Playback Rate ── */
         .video-js .vjs-playback-rate {
@@ -225,6 +250,7 @@
             font-size: 12px !important;
             font-weight: 600 !important;
         }
+
         .video-js .vjs-playback-rate .vjs-playback-rate-value {
             font-size: 12px !important;
             line-height: var(--ctrl-height) !important;
@@ -235,19 +261,22 @@
             background: #181818 !important;
             border: 1px solid #333 !important;
             border-radius: 8px !important;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.75) !important;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.75) !important;
             padding: 4px 0 !important;
         }
+
         .video-js .vjs-menu-item {
             font-family: 'Poppins', sans-serif !important;
             font-size: 12px !important;
             padding: 7px 16px !important;
             color: #ccc !important;
         }
+
         .video-js .vjs-menu-item:hover {
             background: #222 !important;
             color: var(--orange) !important;
         }
+
         .video-js .vjs-menu-item.vjs-selected {
             background: var(--orange) !important;
             color: #000 !important;
@@ -267,8 +296,11 @@
 
         /* ── Embed iframe fallback ── */
         .embed-frame {
-            width: 100%; height: 100%;
-            border: 0; display: block; background: #000;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+            background: #000;
         }
 
         /* ── Controls fade on idle ── */
@@ -276,6 +308,7 @@
             opacity: 0;
             transition: opacity 0.6s ease !important;
         }
+
         .video-js.vjs-user-active .vjs-control-bar,
         .video-js.vjs-paused .vjs-control-bar {
             opacity: 1 !important;
@@ -287,9 +320,8 @@
 <body>
 
     <div class="player-container" id="player-container">
-        <video-js id="peppam-video"
-            class="video-js vjs-default-skin vjs-big-play-centered vjs-16-9"
-            controls preload="auto" playsinline webkit-playsinline>
+        <video-js id="peppam-video" class="video-js vjs-default-skin vjs-big-play-centered vjs-16-9" controls
+            preload="auto" playsinline webkit-playsinline>
         </video-js>
     </div>
 
@@ -323,7 +355,7 @@
                     const parsed = JSON.parse(rawSource.trim());
                     const firstLang = Object.keys(parsed)[0];
                     if (firstLang) rawSource = parsed[firstLang];
-                } catch (e) {}
+                } catch (e) { }
             }
 
             const normalizeSourceUrl = (value) => {

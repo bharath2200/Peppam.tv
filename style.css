@@ -1034,13 +1034,53 @@ footer {
 
 .ad-banner-inline {
     width: 100%;
-    min-height: 90px;
-    background: #222;
-    margin: 25px 0;
+    margin: 20px 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px dashed #444;
-    color: #666;
-    font-size: 0.9rem;
+}
+
+/* Banner 1: 468x60 (Desktop only) */
+.ad-banner-top-468 {
+    width: 100%;
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ad-wrap-468 {
+    width: 468px;
+    height: 60px;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Hide Banner 1 on screens under 500px (Desktop only) */
+@media (max-width: 500px) {
+    .ad-banner-top-468 {
+        display: none !important;
+    }
+}
+
+/* Banner 2: 300x250 (Desktop + Mobile) */
+.ad-banner-bottom-300 {
+    width: 100%;
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ad-wrap-300 {
+    width: 300px;
+    height: 250px;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
 }
