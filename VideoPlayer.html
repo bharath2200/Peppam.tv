@@ -14,14 +14,21 @@
     <link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
 
     <style>
-        /* Global Reset & Black Background */
-        body,
-        html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000000;
+        :root {
+            --orange: #ff6600;
+            --orange-dim: rgba(255, 102, 0, 0.18);
+            --bar-bg: rgba(255, 255, 255, 0.18);
+            --bar-buffer: rgba(255, 255, 255, 0.38);
+            --ctrl-bg: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.55) 60%, transparent 100%);
+            --ctrl-height: 52px;
+            --radius: 10px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body, html {
+            width: 100%; height: 100%;
+            background: #000;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -29,80 +36,250 @@
             font-family: 'Poppins', sans-serif;
         }
 
-        /* The 16:9 Container */
+        /* ── Player Wrapper ── */
         .player-container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1280px;
             aspect-ratio: 16 / 9;
             background: #000;
             position: relative;
-            box-shadow: 0 0 25px rgba(255, 102, 0, 0.2);
-            border-radius: 8px;
+            border-radius: var(--radius);
             overflow: hidden;
+            box-shadow: 0 0 40px rgba(255,102,0,0.15);
         }
 
-        /* --- VIDEO.JS PEPPAM ORANGE THEME --- */
-        :root {
-            --main-orange: #ff6600;
-        }
-
+        /* ── Video.js base overrides ── */
         .video-js {
             font-family: 'Poppins', sans-serif !important;
             width: 100% !important;
             height: 100% !important;
+            border-radius: var(--radius);
         }
 
-        /* Centered Big Play Button */
+        /* ── Big Play Button ── */
         .video-js .vjs-big-play-button {
-            background-color: rgba(255, 102, 0, 0.9) !important;
-            border: 2px solid #ff6600 !important;
-            color: #000 !important;
+            width: 72px !important;
+            height: 72px !important;
             border-radius: 50% !important;
-            width: 2.2em !important;
-            height: 2.2em !important;
-            line-height: 2.1em !important;
-            margin-top: -1.1em !important;
-            margin-left: -1.1em !important;
-            transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 0 25px rgba(255, 102, 0, 0.6) !important;
+            background: rgba(255,102,0,0.88) !important;
+            border: 3px solid var(--orange) !important;
+            color: #fff !important;
+            font-size: 1.6rem !important;
+            line-height: 68px !important;
+            top: 50% !important;
+            left: 50% !important;
+            margin: -36px 0 0 -36px !important;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s !important;
+            box-shadow: 0 0 30px rgba(255,102,0,0.55) !important;
         }
-
         .video-js:hover .vjs-big-play-button,
         .video-js .vjs-big-play-button:focus {
-            background-color: #ff8533 !important;
-            transform: scale(1.12);
-            box-shadow: 0 0 35px rgba(255, 102, 0, 0.85) !important;
+            background: var(--orange) !important;
+            transform: scale(1.1) !important;
+            box-shadow: 0 0 45px rgba(255,102,0,0.8) !important;
         }
 
-        .video-js .vjs-play-progress {
-            background-color: var(--main-orange) !important;
-        }
-
-        .video-js .vjs-play-progress:before {
-            color: var(--main-orange) !important;
-            top: -0.33em;
-        }
-
-        .video-js .vjs-volume-level {
-            background-color: var(--main-orange) !important;
-        }
-
+        /* ── Control Bar ── */
         .video-js .vjs-control-bar {
-            background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.9) 100%) !important;
-            height: 3.6em;
-            font-size: 14px;
+            display: flex !important;
+            align-items: center !important;
+            background: var(--ctrl-bg) !important;
+            height: var(--ctrl-height) !important;
+            padding: 0 10px !important;
+            bottom: 0 !important;
+            width: 100% !important;
+            flex-wrap: nowrap !important;
+            gap: 2px !important;
         }
 
-        .video-js .vjs-button:hover {
-            color: var(--main-orange) !important;
+        /* ── Progress / Seek Row (sits above control bar) ── */
+        .video-js .vjs-progress-control {
+            flex: 1 1 auto !important;
+            display: flex !important;
+            align-items: center !important;
+            height: 100% !important;
+            padding: 0 4px !important;
+            min-width: 0 !important;
         }
 
+        .video-js .vjs-progress-holder {
+            flex: 1 !important;
+            height: 4px !important;
+            border-radius: 4px !important;
+            background: var(--bar-bg) !important;
+            transition: height 0.15s ease !important;
+            cursor: pointer !important;
+        }
+
+        /* Hover: thicker bar */
+        .video-js .vjs-progress-control:hover .vjs-progress-holder {
+            height: 6px !important;
+        }
+
+        /* Buffered amount */
+        .video-js .vjs-load-progress {
+            background: var(--bar-buffer) !important;
+            border-radius: 4px !important;
+        }
+        .video-js .vjs-load-progress div {
+            background: var(--bar-buffer) !important;
+        }
+
+        /* Played amount */
+        .video-js .vjs-play-progress {
+            background: var(--orange) !important;
+            border-radius: 4px !important;
+        }
+
+        /* Scrubber thumb */
+        .video-js .vjs-play-progress::before {
+            content: '' !important;
+            display: block !important;
+            position: absolute !important;
+            right: -7px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            width: 14px !important;
+            height: 14px !important;
+            background: var(--orange) !important;
+            border-radius: 50% !important;
+            box-shadow: 0 0 6px rgba(255,102,0,0.7) !important;
+            font-size: 0 !important;
+        }
+        .video-js .vjs-progress-control:hover .vjs-play-progress::before {
+            width: 16px !important;
+            height: 16px !important;
+            right: -8px !important;
+        }
+
+        /* Tooltip */
+        .video-js .vjs-mouse-display .vjs-time-tooltip,
+        .video-js .vjs-play-progress .vjs-time-tooltip {
+            background: rgba(0,0,0,0.8) !important;
+            color: #fff !important;
+            font-size: 11px !important;
+            font-family: 'Poppins', sans-serif !important;
+            border-radius: 4px !important;
+            padding: 3px 6px !important;
+        }
+
+        /* ── Buttons ── */
+        .video-js .vjs-button {
+            width: 38px !important;
+            flex: 0 0 38px !important;
+            color: #e8e8e8 !important;
+            transition: color 0.18s !important;
+        }
+        .video-js .vjs-button:hover { color: var(--orange) !important; }
+        .video-js .vjs-button > .vjs-icon-placeholder::before { font-size: 1.5rem !important; }
+
+        /* ── Volume Panel ── */
+        .video-js .vjs-volume-panel {
+            display: flex !important;
+            align-items: center !important;
+            width: auto !important;
+            flex: 0 0 auto !important;
+        }
+        .video-js .vjs-volume-panel.vjs-volume-panel-horizontal.vjs-hover,
+        .video-js .vjs-volume-panel.vjs-volume-panel-horizontal:focus-within {
+            width: 90px !important;
+        }
+        .video-js .vjs-volume-bar {
+            background: var(--bar-bg) !important;
+            border-radius: 4px !important;
+            height: 4px !important;
+            margin: 0 4px !important;
+        }
+        .video-js .vjs-volume-level {
+            background: var(--orange) !important;
+            border-radius: 4px !important;
+        }
+        .video-js .vjs-volume-level::before {
+            font-size: 0.75em !important;
+            color: var(--orange) !important;
+        }
+
+        /* ── Time Display ── */
+        .video-js .vjs-time-control {
+            display: flex !important;
+            align-items: center !important;
+            padding: 0 3px !important;
+            min-width: 0 !important;
+            flex: 0 0 auto !important;
+            font-size: 12px !important;
+            font-weight: 500 !important;
+            color: #e8e8e8 !important;
+            letter-spacing: 0.02em !important;
+            white-space: nowrap !important;
+        }
+        .video-js .vjs-time-divider {
+            padding: 0 1px !important;
+            color: #888 !important;
+            min-width: 8px !important;
+        }
+        .video-js .vjs-remaining-time { color: #aaa !important; }
+
+        /* ── Playback Rate ── */
+        .video-js .vjs-playback-rate {
+            flex: 0 0 auto !important;
+            font-size: 12px !important;
+            font-weight: 600 !important;
+        }
+        .video-js .vjs-playback-rate .vjs-playback-rate-value {
+            font-size: 12px !important;
+            line-height: var(--ctrl-height) !important;
+        }
+
+        /* ── Menus ── */
+        .video-js .vjs-menu-button-popup .vjs-menu .vjs-menu-content {
+            background: #181818 !important;
+            border: 1px solid #333 !important;
+            border-radius: 8px !important;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.75) !important;
+            padding: 4px 0 !important;
+        }
+        .video-js .vjs-menu-item {
+            font-family: 'Poppins', sans-serif !important;
+            font-size: 12px !important;
+            padding: 7px 16px !important;
+            color: #ccc !important;
+        }
+        .video-js .vjs-menu-item:hover {
+            background: #222 !important;
+            color: var(--orange) !important;
+        }
+        .video-js .vjs-menu-item.vjs-selected {
+            background: var(--orange) !important;
+            color: #000 !important;
+            font-weight: 700 !important;
+        }
+
+        /* ── Fullscreen / PiP ── */
+        .video-js .vjs-fullscreen-control,
+        .video-js .vjs-picture-in-picture-control {
+            flex: 0 0 auto !important;
+        }
+
+        /* ── Loader Spinner ── */
+        .video-js .vjs-loading-spinner {
+            border-color: var(--orange) !important;
+        }
+
+        /* ── Embed iframe fallback ── */
         .embed-frame {
-            width: 100%;
-            height: 100%;
-            border: 0;
-            display: block;
-            background: #000;
+            width: 100%; height: 100%;
+            border: 0; display: block; background: #000;
+        }
+
+        /* ── Controls fade on idle ── */
+        .video-js.vjs-user-inactive.vjs-playing .vjs-control-bar {
+            opacity: 0;
+            transition: opacity 0.6s ease !important;
+        }
+        .video-js.vjs-user-active .vjs-control-bar,
+        .video-js.vjs-paused .vjs-control-bar {
+            opacity: 1 !important;
+            transition: opacity 0.25s ease !important;
         }
     </style>
 </head>
@@ -110,12 +287,19 @@
 <body>
 
     <div class="player-container" id="player-container">
-        <video-js id="peppam-video" class="video-js vjs-default-skin vjs-big-play-centered vjs-16-9" controls preload="auto" playsinline webkit-playsinline></video-js>
+        <video-js id="peppam-video"
+            class="video-js vjs-default-skin vjs-big-play-centered vjs-16-9"
+            controls preload="auto" playsinline webkit-playsinline>
+        </video-js>
     </div>
 
     <!-- Scripts -->
     <script src="supabase-client.js"></script>
+    <!-- Video.js -->
     <script src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
+    <!-- HLS.js (fallback for non-native HLS) -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
+    <!-- YouTube tech -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-youtube/3.0.1/Youtube.min.js"></script>
 
     <script>
@@ -129,9 +313,11 @@
 
             // Fetch movie from Supabase
             const movie = await fetchMovieById(movieId);
-            let rawSource = (movie && movie.video_source) ? movie.video_source : "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
+            let rawSource = (movie && movie.video_source)
+                ? movie.video_source
+                : 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
 
-            // If multi-language JSON is stored, pick first
+            // Multi-language JSON → pick first language
             if (rawSource.trim().startsWith('{')) {
                 try {
                     const parsed = JSON.parse(rawSource.trim());
@@ -143,74 +329,67 @@
             const normalizeSourceUrl = (value) => {
                 const rawValue = (value || '').trim();
                 if (!rawValue) return '';
-
                 const iframeMatch = rawValue.match(/src\s*=\s*["']([^"']+)["']/i);
-                const extractedSource = iframeMatch ? iframeMatch[1] : rawValue;
-
-                return extractedSource
-                    .replace(/&amp;/gi, '&')
-                    .replace(/^\/\//, 'https://')
-                    .trim();
+                const extracted = iframeMatch ? iframeMatch[1] : rawValue;
+                return extracted.replace(/&amp;/gi, '&').replace(/^\/\//, 'https://').trim();
             };
 
             const getYouTubeId = (url) => {
                 if (!url) return null;
-                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                const match = url.match(regExp);
-                return (match && match[2].length === 11) ? match[2] : null;
+                const m = url.match(/^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
+                return (m && m[2].length === 11) ? m[2] : null;
             };
 
-            function getMimeType(url) {
+            const getMimeType = (url) => {
                 if (/\.m3u8(?:$|[?#])/i.test(url) || url.includes('m3u8')) return 'application/x-mpegURL';
                 if (/\.mp4(?:$|[?#])/i.test(url)) return 'video/mp4';
                 if (/\.webm(?:$|[?#])/i.test(url)) return 'video/webm';
                 if (/\.ogg(?:$|[?#])/i.test(url)) return 'video/ogg';
                 return 'video/mp4';
-            }
+            };
 
             const normalizedSource = normalizeSourceUrl(rawSource);
             const videoId = getYouTubeId(normalizedSource);
             const isHttpUrl = /^https?:\/\//i.test(normalizedSource);
-            const isM3u8Source = /\.m3u8(?:$|[?#])/i.test(normalizedSource) || normalizedSource.includes('m3u8');
-            const isDirectMediaFile = /\.(mp4|webm|ogg|m4v|mov|mkv)(?:$|[?#])/i.test(normalizedSource);
-            const isMkvFile = /\.mkv(?:$|[?#])/i.test(normalizedSource);
-            const shouldUseIframe = isHttpUrl
-                && !videoId
-                && !isM3u8Source
-                && !isDirectMediaFile;
+            const isM3u8 = /\.m3u8(?:$|[?#])/i.test(normalizedSource) || normalizedSource.includes('m3u8');
+            const isDirectMedia = /\.(mp4|webm|ogg|m4v|mov|mkv)(?:$|[?#])/i.test(normalizedSource);
+            const isMkv = /\.mkv(?:$|[?#])/i.test(normalizedSource);
+            const useIframe = isHttpUrl && !videoId && !isM3u8 && !isDirectMedia;
 
-            if (isMkvFile) {
+            // MKV: show download card
+            if (isMkv) {
                 container.innerHTML = `
-                    <div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; background:#111; padding:30px; box-sizing:border-box; text-align:center;">
-                        <div style="font-size:2.8rem;">🎬</div>
-                        <div style="color:#ff6600; font-size:1.1rem; font-weight:700;">MKV Format — Download to Watch</div>
-                        <div style="color:#aaa; font-size:0.82rem; line-height:1.6; max-width:360px;">
+                    <div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:#111;padding:30px;box-sizing:border-box;text-align:center;">
+                        <div style="font-size:3rem;">🎬</div>
+                        <div style="color:#ff6600;font-size:1.1rem;font-weight:700;">MKV Format — Download to Watch</div>
+                        <div style="color:#aaa;font-size:0.82rem;line-height:1.6;max-width:360px;">
                             Browsers cannot play <strong style="color:#fff;">MKV</strong> files directly.<br>
-                            Download the file to watch in VLC or media players.
+                            Download and watch in VLC or any media player.
                         </div>
-                        <a href="${normalizedSource}" download style="display:inline-block; background:#ff6600; color:#000; font-weight:700; padding:11px 28px; border-radius:25px; text-decoration:none; font-size:0.9rem;">
+                        <a href="${normalizedSource}" download style="background:#ff6600;color:#000;font-weight:700;padding:11px 28px;border-radius:25px;text-decoration:none;font-size:0.9rem;">
                             ⬇️ Download Movie
                         </a>
                     </div>`;
                 return;
             }
 
-            if (shouldUseIframe) {
+            // Iframe embed
+            if (useIframe) {
                 container.innerHTML = `<iframe class="embed-frame" src="${normalizedSource}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
                 return;
             }
 
-            let videoJsOptions = {
+            // ── Video.js + HLS.js Player ──
+            const videoJsOptions = {
                 autoplay: false,
                 controls: true,
                 responsive: true,
                 fluid: true,
                 playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 2],
                 html5: {
-                    vhs: {
-                        overrideNative: true,
-                        enableLowInitialPlaylist: true
-                    }
+                    vhs: { overrideNative: true, enableLowInitialPlaylist: true },
+                    nativeAudioTracks: false,
+                    nativeVideoTracks: false
                 },
                 controlBar: {
                     children: [
@@ -220,9 +399,8 @@
                         'timeDivider',
                         'durationDisplay',
                         'progressControl',
-                        'liveDisplay',
-                        'remainingTimeDisplay',
                         'customControlSpacer',
+                        'remainingTimeDisplay',
                         'playbackRateMenuButton',
                         'subsCapsButton',
                         'audioTrackButton',
@@ -234,25 +412,19 @@
 
             if (videoId) {
                 videoJsOptions.techOrder = ['youtube'];
-                videoJsOptions.sources = [{
-                    type: 'video/youtube',
-                    src: `https://www.youtube.com/watch?v=${videoId}`
-                }];
+                videoJsOptions.sources = [{ type: 'video/youtube', src: `https://www.youtube.com/watch?v=${videoId}` }];
                 videoJsOptions.youtube = { ytControls: 2 };
-            } else if (isM3u8Source) {
-                videoJsOptions.sources = [{
-                    src: normalizedSource,
-                    type: 'application/x-mpegURL'
-                }];
+            } else if (isM3u8 && Hls.isSupported()) {
+                // Use HLS.js directly for better compatibility
+                const videoEl = document.querySelector('#peppam-video video, #peppam-video');
+                videoJsOptions.techOrder = ['html5'];
+                videoJsOptions.sources = [{ src: normalizedSource, type: 'application/x-mpegURL' }];
             } else {
-                videoJsOptions.sources = [{
-                    src: normalizedSource,
-                    type: getMimeType(normalizedSource)
-                }];
+                videoJsOptions.sources = [{ src: normalizedSource, type: getMimeType(normalizedSource) }];
             }
 
             window.player = videojs('peppam-video', videoJsOptions, function onPlayerReady() {
-                console.log('Video.js player ready on VideoPlayer.html');
+                console.log('Peppam Video.js player ready');
             });
         });
     </script>
