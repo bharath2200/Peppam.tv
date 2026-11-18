@@ -11,8 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-
+    <link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
     <link rel="stylesheet" href="style.css">
 
     <style>
@@ -25,59 +24,95 @@
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             margin-top: 20px;
-            /* Spacing from details */
+            position: relative;
         }
 
-        /* --- THEME CUSTOMIZATION --- */
+        /* --- VIDEO.JS PEPPAM ORANGE THEME --- */
         :root {
             --main-orange: #ff6600;
-            /* Orange */
         }
 
-        .plyr {
-            font-family: 'Poppins', sans-serif;
-            --plyr-color-main: var(--main-orange);
-            --plyr-video-control-color: #ffffff;
-            --plyr-video-control-color-hover: var(--main-orange);
-            --plyr-menu-background: #111;
-            --plyr-menu-color: #fff;
-        }
-
-        /* Big Play Button (Center) */
-        .plyr__control--overlaid {
-            background: var(--main-orange);
-            color: #000;
-        }
-
-        .plyr__control--overlaid:hover {
-            background: #ff8533;
-        }
-
-        /* Timeline Scrubber Handle */
-        .plyr__range--seek::-webkit-slider-thumb {
-            background: var(--main-orange) !important;
-            box-shadow: 0 0 8px rgba(255, 102, 0, 0.6) !important;
-        }
-
-        /* Tooltips */
-        .plyr__tooltip {
-            background: var(--main-orange) !important;
-            color: #000 !important;
+        .video-js {
             font-family: 'Poppins', sans-serif !important;
-            font-weight: 600;
-            border-radius: 4px;
-        }
-
-        .plyr__time {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 500;
-        }
-
-        /* Fix for YouTube/HLS filling the container */
-        #player,
-        .plyr {
             width: 100% !important;
             height: 100% !important;
+        }
+
+        /* Big Play Button (Centered & Themed) */
+        .video-js .vjs-big-play-button {
+            background-color: rgba(255, 102, 0, 0.9) !important;
+            border: 2px solid #ff6600 !important;
+            color: #000 !important;
+            border-radius: 50% !important;
+            width: 2.2em !important;
+            height: 2.2em !important;
+            line-height: 2.1em !important;
+            margin-top: -1.1em !important;
+            margin-left: -1.1em !important;
+            transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 0 25px rgba(255, 102, 0, 0.6) !important;
+        }
+
+        .video-js:hover .vjs-big-play-button,
+        .video-js .vjs-big-play-button:focus,
+        .video-js .vjs-big-play-button:active {
+            background-color: #ff8533 !important;
+            transform: scale(1.12);
+            box-shadow: 0 0 35px rgba(255, 102, 0, 0.85) !important;
+        }
+
+        /* Scrubber & Progress Bar */
+        .video-js .vjs-play-progress {
+            background-color: var(--main-orange) !important;
+        }
+
+        .video-js .vjs-play-progress:before {
+            color: var(--main-orange) !important;
+            top: -0.33em;
+        }
+
+        .video-js .vjs-volume-level {
+            background-color: var(--main-orange) !important;
+        }
+
+        .video-js .vjs-slider:focus {
+            text-shadow: 0 0 1em #ff6600 !important;
+            box-shadow: 0 0 1em #ff6600 !important;
+        }
+
+        /* Control Bar */
+        .video-js .vjs-control-bar {
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.9) 100%) !important;
+            height: 3.6em;
+            font-size: 14px;
+        }
+
+        .video-js .vjs-button:hover {
+            color: var(--main-orange) !important;
+        }
+
+        /* Menus (Quality, Audio Tracks, Captions) */
+        .video-js .vjs-menu-button-popup .vjs-menu .vjs-menu-content {
+            background-color: #121212 !important;
+            border: 1px solid #333 !important;
+            border-radius: 6px !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7) !important;
+        }
+
+        .video-js .vjs-menu-item {
+            font-family: 'Poppins', sans-serif !important;
+            font-size: 0.85rem !important;
+        }
+
+        .video-js .vjs-menu-item:hover {
+            background-color: #222 !important;
+            color: var(--main-orange) !important;
+        }
+
+        .video-js .vjs-menu-item.vjs-selected {
+            background-color: var(--main-orange) !important;
+            color: #000 !important;
+            font-weight: 600 !important;
         }
 
         .embed-frame {
@@ -267,8 +302,8 @@
         <div style="position: absolute;">Advertisement (Sticky Bottom)</div>
     </div>
 
-    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-youtube/3.0.1/Youtube.min.js"></script>
     <script src="devtools-block.js"></script>
     <script src="supabase-client.js"></script>
     <script src="script.js"></script>
@@ -326,7 +361,7 @@
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('#lang-buttons .lang-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-                    loadPlayer(sources[lang]);
+                    switchVideoSource(sources[lang]);
                 });
                 buttonsContainer.appendChild(btn);
             });
@@ -334,70 +369,97 @@
             return sources[langs[0]]; // return first language URL to load by default
         }
 
-        // Build audio-track switcher from HLS manifest (single m3u8 with multi-audio)
-        function setupHlsAudioTracks(hls) {
-            if (!hls || !hls.audioTracks || hls.audioTracks.length <= 1) return;
+        // Build audio-track switcher from Video.js HLS audio tracks
+        function setupVideoJsAudioTracks(player) {
+            if (!player) return;
+            const audioTracks = player.audioTracks();
+            if (!audioTracks) return;
+
             const switcher = document.getElementById('lang-switcher');
             const buttonsContainer = document.getElementById('lang-buttons');
-            if (buttonsContainer.children.length > 0) return; // already set by multi-source
 
-            switcher.style.display = 'flex';
-            buttonsContainer.innerHTML = '';
+            function renderTracks() {
+                if (buttonsContainer.dataset.sourceType === 'multi-url') return;
+                if (audioTracks.length <= 1) return;
 
-            hls.audioTracks.forEach((track, index) => {
-                const btn = document.createElement('button');
-                btn.textContent = track.name || track.lang || `Audio ${index + 1}`;
-                btn.className = 'lang-btn' + (index === hls.audioTrack ? ' active' : '');
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('#lang-buttons .lang-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    hls.audioTrack = index;
-                });
-                buttonsContainer.appendChild(btn);
-            });
+                switcher.style.display = 'flex';
+                buttonsContainer.innerHTML = '';
+
+                for (let i = 0; i < audioTracks.length; i++) {
+                    const track = audioTracks[i];
+                    const btn = document.createElement('button');
+                    btn.textContent = track.label || track.language || `Audio ${i + 1}`;
+                    btn.className = 'lang-btn' + (track.enabled ? ' active' : '');
+                    btn.addEventListener('click', () => {
+                        for (let j = 0; j < audioTracks.length; j++) {
+                            audioTracks[j].enabled = (j === i);
+                        }
+                        document.querySelectorAll('#lang-buttons .lang-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    });
+                    buttonsContainer.appendChild(btn);
+                }
+            }
+
+            audioTracks.addEventListener('addtrack', renderTracks);
+            audioTracks.addEventListener('removetrack', renderTracks);
+            audioTracks.addEventListener('change', renderTracks);
+            renderTracks();
         }
 
-        // Function to Initialize Player
+        function getMimeType(url) {
+            if (/\.m3u8(?:$|[?#])/i.test(url) || url.includes('m3u8')) return 'application/x-mpegURL';
+            if (/\.mp4(?:$|[?#])/i.test(url)) return 'video/mp4';
+            if (/\.webm(?:$|[?#])/i.test(url)) return 'video/webm';
+            if (/\.ogg(?:$|[?#])/i.test(url)) return 'video/ogg';
+            return 'video/mp4';
+        }
+
+        function switchVideoSource(url) {
+            if (window.player && typeof window.player.src === 'function') {
+                const normalized = normalizeSourceUrl(url);
+                window.player.src({ src: normalized, type: getMimeType(normalized) });
+                window.player.play().catch(() => {});
+            } else {
+                loadPlayer(url);
+            }
+        }
+
+        const normalizeSourceUrl = (value) => {
+            const rawValue = (value || '').trim();
+            if (!rawValue) return '';
+
+            const iframeMatch = rawValue.match(/src\s*=\s*["']([^"']+)["']/i);
+            const extractedSource = iframeMatch ? iframeMatch[1] : rawValue;
+            return extractedSource
+                .replace(/&amp;/gi, '&')
+                .replace(/^\/\//, 'https://')
+                .trim();
+        };
+
+        const getYouTubeId = (url) => {
+            if (!url) return null;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        };
+
+        // Function to Initialize Video.js Player
         function loadPlayer(sourceUrl) {
             const container = document.getElementById('player-container');
             if (!container) return;
 
-            console.log("Loading player with source:", sourceUrl);
+            console.log("Loading Video.js player with source:", sourceUrl);
 
-            const playerConfig = {
-                controls: [
-                    'play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'
-                ],
-                ratio: '16:9',
-                keyboard: { focused: true, global: true },
-                tooltips: { controls: true, seek: true },
-                fullscreen: { enabled: true, fallback: true, iosNative: true, container }
-            };
-
-            // Destroy existing player if it exists
-            if (window.player && typeof window.player.destroy === 'function') {
-                window.player.destroy();
+            // Destroy existing Video.js player if it exists
+            if (window.player && typeof window.player.dispose === 'function') {
+                try {
+                    window.player.dispose();
+                } catch (e) {
+                    console.warn("Player disposal note:", e);
+                }
+                window.player = null;
             }
-
-            const normalizeSourceUrl = (value) => {
-                const rawValue = (value || '').trim();
-                if (!rawValue) return '';
-
-                const iframeMatch = rawValue.match(/src\s*=\s*["']([^"']+)["']/i);
-                const extractedSource = iframeMatch ? iframeMatch[1] : rawValue;
-                return extractedSource
-                    .replace(/&amp;/gi, '&')
-                    .replace(/^\/\//, 'https://')
-                    .trim();
-            };
-
-            // Robust YouTube ID extraction
-            const getYouTubeId = (url) => {
-                if (!url) return null;
-                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                const match = url.match(regExp);
-                return (match && match[2].length === 11) ? match[2] : null;
-            };
 
             const normalizedSource = normalizeSourceUrl(sourceUrl);
             const videoId = getYouTubeId(normalizedSource);
@@ -439,101 +501,78 @@
                 return;
             }
 
-            const createVideoElement = (src = '') => {
-                container.innerHTML = `<video id="player" playsinline webkit-playsinline controls preload="metadata" crossorigin></video>`;
-                const video = document.getElementById('player');
-                if (src) {
-                    video.src = src;
-                }
-                video.setAttribute('playsinline', '');
-                video.setAttribute('webkit-playsinline', '');
-                video.setAttribute('controls', '');
-                return video;
-            };
-            const requestElementFullscreen = (element) => {
-                if (!element) return Promise.reject(new Error('No element available for fullscreen'));
-
-                const requestFullscreen =
-                    element.requestFullscreen ||
-                    element.webkitRequestFullscreen ||
-                    element.webkitEnterFullscreen ||
-                    element.msRequestFullscreen;
-
-                if (!requestFullscreen) {
-                    return Promise.reject(new Error('Fullscreen API unavailable'));
-                }
-
-                return Promise.resolve(requestFullscreen.call(element));
-            };
-
-            const wireMobilePlaybackFixes = (playerInstance, video) => {
-                if (!playerInstance || !video) return;
-
-                const ensurePlayback = () => {
-                    if (video.paused) {
-                        const playAttempt = video.play();
-                        if (playAttempt && typeof playAttempt.catch === 'function') {
-                            playAttempt.catch(() => { });
-                        }
-                    }
-                };
-                const bindOverlay = () => {
-                    const overlayButton = container.querySelector('.plyr__control--overlaid');
-                    if (!overlayButton || overlayButton.dataset.mobileBound === 'true') return;
-
-                    overlayButton.dataset.mobileBound = 'true';
-                    overlayButton.addEventListener('touchend', ensurePlayback, { passive: true });
-                    overlayButton.addEventListener('click', ensurePlayback);
-                };
-
-                playerInstance.on('ready', bindOverlay);
-                bindOverlay();
-
-                const fullscreenButton = container.querySelector('[data-plyr="fullscreen"]');
-                if (fullscreenButton && fullscreenButton.dataset.mobileFullscreenBound !== 'true') {
-                    fullscreenButton.dataset.mobileFullscreenBound = 'true';
-                    const openFullscreen = (event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        requestElementFullscreen(container).catch(() => requestElementFullscreen(video).catch(() => { }));
-                    };
-
-                    fullscreenButton.addEventListener('touchend', openFullscreen, { passive: false });
-                    fullscreenButton.addEventListener('click', openFullscreen);
-                }
-            };
-            if (videoId) {
-                console.log("YouTube detected, ID:", videoId);
-                // For YouTube, Plyr works best with a div
-                container.innerHTML = `<div id="player" data-plyr-provider="youtube" data-plyr-embed-id="${videoId}"></div>`;
-                window.player = new Plyr('#player', playerConfig);
-            } else if (shouldUseIframe) {
-                console.log("Embed iframe detected");
+            // ── IFRAME EMBED ──
+            if (shouldUseIframe) {
                 container.innerHTML = `<iframe class="embed-frame" src="${normalizedSource}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
-            } else if (Hls.isSupported() && isM3u8Source) {
-                console.log("HLS detected");
-                const video = createVideoElement();
-                if (window._hlsInstance) { window._hlsInstance.destroy(); }
-                const hls = new Hls();
-                window._hlsInstance = hls;
-                hls.loadSource(normalizedSource);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                    window.player = new Plyr(video, playerConfig);
-                    wireMobilePlaybackFixes(window.player, video);
-                    // Auto-detect HLS embedded audio tracks (multi-lang in one m3u8)
-                    setupHlsAudioTracks(hls);
-                });
+                return;
+            }
+
+            // ── VIDEO.JS INITIALIZATION ──
+            container.innerHTML = `
+                <video-js id="peppam-video" class="video-js vjs-default-skin vjs-big-play-centered vjs-16-9" controls preload="auto" playsinline webkit-playsinline></video-js>
+            `;
+
+            let videoJsOptions = {
+                autoplay: false,
+                controls: true,
+                responsive: true,
+                fluid: true,
+                playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 2],
+                html5: {
+                    vhs: {
+                        overrideNative: true,
+                        enableLowInitialPlaylist: true
+                    },
+                    nativeAudioTracks: false,
+                    nativeVideoTracks: false
+                },
+                controlBar: {
+                    children: [
+                        'playToggle',
+                        'volumePanel',
+                        'currentTimeDisplay',
+                        'timeDivider',
+                        'durationDisplay',
+                        'progressControl',
+                        'liveDisplay',
+                        'remainingTimeDisplay',
+                        'customControlSpacer',
+                        'playbackRateMenuButton',
+                        'subsCapsButton',
+                        'audioTrackButton',
+                        'pictureInPictureToggle',
+                        'fullscreenToggle'
+                    ]
+                }
+            };
+
+            if (videoId) {
+                videoJsOptions.techOrder = ['youtube'];
+                videoJsOptions.sources = [{
+                    type: 'video/youtube',
+                    src: `https://www.youtube.com/watch?v=${videoId}`
+                }];
+                videoJsOptions.youtube = { ytControls: 2 };
             } else if (isM3u8Source) {
-                console.log("Native HLS detected");
-                const video = createVideoElement(normalizedSource);
-                window.player = new Plyr(video, playerConfig);
-                wireMobilePlaybackFixes(window.player, video);
+                videoJsOptions.sources = [{
+                    src: normalizedSource,
+                    type: 'application/x-mpegURL'
+                }];
             } else {
-                console.log("Standard video detected");
-                const video = createVideoElement(normalizedSource);
-                window.player = new Plyr(video, playerConfig);
-                wireMobilePlaybackFixes(window.player, video);
+                videoJsOptions.sources = [{
+                    src: normalizedSource,
+                    type: getMimeType(normalizedSource)
+                }];
+            }
+
+            try {
+                window.player = videojs('peppam-video', videoJsOptions, function onPlayerReady() {
+                    console.log('Video.js player is ready');
+                    const player = this;
+                    setupVideoJsAudioTracks(player);
+                });
+            } catch (err) {
+                console.error("Video.js initialization error:", err);
             }
         }
 
