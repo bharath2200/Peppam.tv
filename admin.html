@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Peppam.tv</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --admin-bg: #0a0a0a;
+            --card-bg: #151515;
+            --theme-orange: #ff6600;
+            --error-red: #ff3333;
+            --success-green: #33ff33;
+        }
+
+        body.admin-body {
+            background-color: var(--admin-bg);
+            color: #fff;
+            padding: 40px 20px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .admin-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .admin-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .admin-card h2 {
+            margin-bottom: 20px;
+            color: var(--theme-orange);
+            font-size: 1.5rem;
+        }
+
+        /* Form Styling */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #ccc;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: #fff;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            border-color: var(--theme-orange);
+            outline: none;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--theme-orange);
+            color: #000;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #ff8533;
+            transform: translateY(-2px);
+        }
+
+        /* Movie List Styling */
+        .movie-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .movie-item {
+            display: flex;
+            align-items: center;
+            background: #111;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #222;
+            justify-content: space-between;
+        }
+
+        .movie-item-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .movie-item img {
+            width: 50px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .movie-item-details h3 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .movie-item-details p {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .movie-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-delete {
+            background: #ff333322;
+            color: var(--error-red);
+            border: 1px solid var(--error-red);
+            padding: 8px 15px;
+        }
+
+        .btn-delete:hover {
+            background: var(--error-red);
+            color: #fff;
+        }
+
+        .btn-edit {
+            background: #ff660022;
+            color: var(--theme-orange);
+            border: 1px solid var(--theme-orange);
+            padding: 8px 15px;
+        }
+
+        .btn-edit:hover {
+            background: var(--theme-orange);
+            color: #000;
+        }
+    </style>
+</head>
+
+<body class="admin-body">
+
+    <div class="admin-header">
+        <a href="/" class="logo" style="text-decoration: none;">
+            <h1><span class="peppam">Peppam</span><span class="tv">.tv</span> <small
+                    style="font-size: 0.5em; vertical-align: middle; color: #ff6600;">ADMIN</small></h1>
+        </a>
+        <div id="user-info" style="display:none; align-items:center; gap:15px;">
+            <span style="color:#888;">Logged in as admin</span>
+            <button class="btn" onclick="logout()"
+                style="background:#333; color:#fff; border:1px solid #555; padding: 5px 15px;">Logout</button>
+        </div>
+        <a href="/" style="color: #ccc; text-decoration: none;">&larr; Back to Site</a>
+    </div>
+    <!-- Login Form overlay -->
+    <div id="login-container"
+        style="max-width: 400px; margin: 100px auto; padding: 30px; background: #111; border-radius: 12px; border: 1px solid #333; text-align: center;">
+        <h2 style="color: var(--theme-orange); margin-bottom: 25px;">Admin Login</h2>
+        <form id="login-form">
+            <div class="form-group" style="text-align: left;">
+                <label>Username</label>
+                <input type="text" id="login-user" required>
+            </div>
+            <div class="form-group" style="text-align: left;">
+                <label>Password</label>
+                <input type="password" id="login-pass" required>
+            </div>
+            <button type="submit" class="btn btn-primary" id="login-btn">Login</button>
+            <p id="login-error" style="color: var(--error-red); margin-top: 15px; font-size: 0.9em; display: none;">
+                Invalid credentials. Please try again.</p>
+        </form>
+    </div>
+
+    <!-- Main Dashboard (Hidden by default) -->
+    <div id="dashboard-container" class="admin-container" style="display: none;">
+
+        <!-- Add/Edit Movie Form -->
+        <div class="admin-card">
+            <h2 id="form-title">Add New Movie</h2>
+            <form id="movie-form">
+                <input type="hidden" id="edit-id">
+
+                <div class="form-group">
+                    <label>Movie ID (URL slug, e.g., 'avatar-2')</label>
+                    <input type="text" id="movie-id" placeholder="telusu-kada" required>
+                </div>
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="title" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Year</label>
+                    <input type="text" id="year">
+                </div>
+
+                <div class="form-group">
+                    <label>Genre</label>
+                    <input type="text" id="genre">
+                </div>
+
+                <div class="form-group">
+                    <label>Cast</label>
+                    <input type="text" id="cast">
+                </div>
+
+                <div class="form-group">
+                    <label>Director</label>
+                    <input type="text" id="director">
+                </div>
+
+                <div class="form-group">
+                    <label>IMDb Rating (e.g. 6.1/10)</label>
+                    <input type="text" id="imdb_rating">
+                </div>
+
+                <div class="form-group">
+                    <label>Writer</label>
+                    <input type="text" id="writer">
+                </div>
+                <div class="form-group">
+                    <label>Language</label>
+                    <input type="text" id="language" placeholder="e.g. Hindi & Telugu / ESubs">
+                </div>
+
+                <div class="form-group">
+                    <label>Quality</label>
+                    <input type="text" id="quality" placeholder="e.g. 1080p HEVC | 720p x264">
+                </div>
+
+                <div class="form-group">
+                    <label>Format</label>
+                    <input type="text" id="format" placeholder="e.g. MKV">
+                </div>
+
+                <div class="form-group">
+                    <label>Poster URL</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="url" id="poster" style="flex: 1;">
+                        <input type="file" id="poster-upload" accept="image/*" style="display: none;">
+                        <button type="button" class="btn" id="upload-btn"
+                            style="background:#333; color:#fff; border:1px solid #555;">Upload Poster</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Synopsis</label>
+                    <textarea id="synopsis" rows="4"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Streaming Info</label>
+                    <textarea id="streaming-info" rows="3"
+                        placeholder="Enter text and links here (e.g. Peddi Download Now \n https://...)"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Video Source — Single URL <em style="color:#888;font-weight:400;">or Multi-Language JSON</em></label>
+                    <textarea id="video-source" rows="4"
+                        placeholder='Single: paste M3U8, YouTube, embed URL, or iframe code&#10;&#10;Multi-Language JSON format:&#10;{"Telugu":"https://url1.m3u8","Hindi":"https://url2.m3u8","Tamil":"https://url3.m3u8"}'></textarea>
+                    <small style="color:#888; font-size:0.75rem;">For multi-language, paste a JSON object with language names as keys and stream URLs as values.</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Screenshots (URLs)</label>
+                    <textarea id="screenshots" rows="3" placeholder="Paste image URLs here (one per line)"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submit-btn" style="width: 100%;">Add Movie</button>
+                <button type="button" class="btn" id="cancel-btn"
+                    style="background:#333; color:#fff; display:none; margin-top:10px; width:100%;">Cancel Edit</button>
+            </form>
+        </div>
+
+        <!-- Movie List -->
+        <div class="admin-card">
+            <h2>Current Library</h2>
+            <div id="movie-list" class="movie-list">
+                <!-- Loaded from Supabase -->
+                <p>Loading library...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Supabase Library -->
+    <script src="supabase-client.js"></script>
+    <script>
+        const movieForm = document.getElementById('movie-form');
+        const loginForm = document.getElementById('login-form');
+        const movieList = document.getElementById('movie-list');
+        const submitBtn = document.getElementById('submit-btn');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const formTitle = document.getElementById('form-title');
+
+        const loginArea = document.getElementById('login-container');
+        const dashboardArea = document.getElementById('dashboard-container');
+        const userInfo = document.getElementById('user-info');
+
+        const posterUpload = document.getElementById('poster-upload');
+        const uploadBtn = document.getElementById('upload-btn');
+        const posterInput = document.getElementById('poster');
+
+        if (uploadBtn && posterUpload) {
+            uploadBtn.addEventListener('click', () => {
+                posterUpload.click();
+            });
+
+            posterUpload.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                uploadBtn.textContent = 'Uploading...';
+                uploadBtn.disabled = true;
+
+                try {
+                    const url = await uploadPoster(file);
+                    if (url) {
+                        posterInput.value = url;
+                    }
+                } catch (error) {
+                    alert('Upload failed: ' + error.message);
+                }
+
+                uploadBtn.textContent = 'Upload Poster';
+                uploadBtn.disabled = false;
+                posterUpload.value = '';
+            });
+        }
+
+        // Check Session
+        function checkSession() {
+            if (localStorage.getItem('peppam_admin_session')) {
+                showDashboard();
+            } else {
+                showLogin();
+            }
+        }
+
+        function showDashboard() {
+            loginArea.style.display = 'none';
+            dashboardArea.style.display = 'grid';
+            userInfo.style.display = 'flex';
+            loadLibrary();
+        }
+
+        function showLogin() {
+            loginArea.style.display = 'block';
+            dashboardArea.style.display = 'none';
+            userInfo.style.display = 'none';
+        }
+        // Handle Login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = document.getElementById('login-user').value;
+            const pass = document.getElementById('login-pass').value;
+            const loginBtn = document.getElementById('login-btn');
+            const loginError = document.getElementById('login-error');
+
+            loginBtn.textContent = 'Verifying...';
+            loginError.style.display = 'none';
+
+            const result = await validateAdmin(user, pass);
+
+            if (result.success) {
+                localStorage.setItem('peppam_admin_session', result.token);
+                showDashboard();
+            } else {
+                loginError.style.display = 'block';
+            }
+            loginBtn.textContent = 'Login';
+        });
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('peppam_admin_session');
+            window.location.reload();
+        }
+        // Load Library
+        async function loadLibrary() {
+            movieList.innerHTML = '<p>Refreshing library...</p>';
+            const movies = await fetchAllMovies();
+
+            if (!movies || movies.length === 0) {
+                movieList.innerHTML = '<p>No movies in library. Start by adding one!</p>';
+                return;
+            }
+
+            movieList.innerHTML = movies.map(movie => `
+                <div class="movie-item">
+                    <div class="movie-item-info">
+                        <img src="${movie.poster || 'https://via.placeholder.com/50x70'}" alt="${movie.title}">
+                        <div class="movie-item-details">
+                            <h3>${movie.title}</h3>
+                            <p>${movie.year} | ${movie.genre}</p>
+                        </div>
+                    </div>
+                    <div class="movie-actions">
+                        <button class="btn btn-edit" onclick="editMovie('${movie.id}')">Edit</button>
+                        <button class="btn btn-delete" onclick="handleDelete('${movie.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        function normalizeVideoSourceInput(value) {
+            const rawValue = (value || '').trim();
+            if (!rawValue) return '';
+
+            const iframeMatch = rawValue.match(/src\s*=\s*["']([^"']+)["']/i);
+            const extractedSource = iframeMatch ? iframeMatch[1] : rawValue;
+
+            return extractedSource
+                .replace(/&amp;/gi, '&')
+                .replace(/^\/\//, 'https://')
+                .trim();
+        }
+
+        // Form Submission
+        movieForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const movieData = {
+                id: document.getElementById('movie-id').value,
+                title: document.getElementById('title').value,
+                year: document.getElementById('year').value,
+                genre: document.getElementById('genre').value,
+                cast_members: document.getElementById('cast').value,
+                director: document.getElementById('director').value,
+                imdb_rating: document.getElementById('imdb_rating').value,
+                writer: document.getElementById('writer').value,
+                language: document.getElementById('language').value,
+                quality: document.getElementById('quality').value,
+                format: document.getElementById('format').value,
+                poster: document.getElementById('poster').value,
+                synopsis: document.getElementById('synopsis').value,
+                streaming_info: document.getElementById('streaming-info').value,
+                video_source: normalizeVideoSourceInput(document.getElementById('video-source').value),
+                screenshots: document.getElementById('screenshots').value
+            };
+
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            const result = await upsertMovie(movieData);
+
+            if (result.success) {
+                alert('Movie saved successfully!');
+                resetForm();
+                loadLibrary();
+            } else {
+                alert('Error: ' + result.error);
+            }
+
+            submitBtn.textContent = document.getElementById('edit-id').value ? 'Update Movie' : 'Add Movie';
+            submitBtn.disabled = false;
+        });
+
+        // Edit Movie
+        async function editMovie(id) {
+            const movie = await fetchMovieById(id);
+            if (!movie) return;
+            document.getElementById('edit-id').value = id;
+            document.getElementById('movie-id').value = movie.id;
+            document.getElementById('movie-id').readOnly = true; // Don't change ID while editing
+            document.getElementById('title').value = movie.title;
+            document.getElementById('year').value = movie.year;
+            document.getElementById('genre').value = movie.genre;
+            document.getElementById('cast').value = movie.cast_members;
+            document.getElementById('director').value = movie.director;
+            document.getElementById('imdb_rating').value = movie.imdb_rating || '';
+            document.getElementById('writer').value = movie.writer || '';
+            document.getElementById('language').value = movie.language || '';
+            document.getElementById('quality').value = movie.quality || '';
+            document.getElementById('format').value = movie.format || '';
+            document.getElementById('poster').value = movie.poster;
+            document.getElementById('synopsis').value = movie.synopsis;
+            document.getElementById('streaming-info').value = movie.streaming_info;
+            document.getElementById('video-source').value = movie.video_source;
+            document.getElementById('screenshots').value = movie.screenshots || '';
+
+            formTitle.textContent = 'Edit Movie: ' + movie.title;
+            submitBtn.textContent = 'Update Movie';
+            cancelBtn.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        // Handle Delete
+        async function handleDelete(id) {
+            if (confirm(`Are you sure you want to delete this movie? This action cannot be undone.`)) {
+                const result = await deleteMovie(id);
+                if (result.success) {
+                    alert('Movie deleted.');
+                    loadLibrary();
+                } else {
+                    alert('Delete failed: ' + result.error);
+                }
+            }
+        }
+
+        // Reset Form
+        function resetForm() {
+            movieForm.reset();
+            document.getElementById('edit-id').value = '';
+            document.getElementById('movie-id').readOnly = false;
+            formTitle.textContent = 'Add New Movie';
+            submitBtn.textContent = 'Add Movie';
+            cancelBtn.style.display = 'none';
+        }
+
+        cancelBtn.addEventListener('click', resetForm);
+        // Initial Load
+        document.addEventListener('DOMContentLoaded', checkSession);
+    </script>
+</body>
+
+</html>

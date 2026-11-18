@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Player</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+
+    <style>
+        /* Global Reset & Black Background */
+        body,
+        html {
+
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            /* Global Font */
+        }
+
+        /* The 16:9 Container */
+        .player-container {
+            width: 100%;
+            max-width: 1200px;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            position: relative;
+            box-shadow: 0 0 20px rgba(255, 102, 0, 0.15);
+        }
+
+        /* --- THEME CUSTOMIZATION --- */
+        :root {
+            --main-orange: #ff6600;
+            /* Orange */
+        }
+
+        .plyr {
+            /* Apply Poppins to the Player explicitly */
+            font-family: 'Poppins', sans-serif;
+
+            /* Colors */
+            --plyr-color-main: var(--main-orange);
+            --plyr-video-control-color: #ffffff;
+            --plyr-video-control-color-hover: var(--main-orange);
+
+            /* Remove menu background for cleaner look */
+            --plyr-menu-background: #111;
+            --plyr-menu-color: #fff;
+        }
+
+        /* 1. Big Play Button (Center) */
+        .plyr__control--overlaid {
+            background: var(--main-orange);
+            color: #000;
+        }
+
+        .plyr__control--overlaid:hover {
+            background: #ff8533;
+        }
+
+        /* 2. Timeline Scrubber Handle */
+        .plyr__range--seek::-webkit-slider-thumb {
+            background: var(--main-orange) !important;
+            box-shadow: 0 0 8px rgba(255, 102, 0, 0.6) !important;
+        }
+
+        /* 3. Tooltips (Time Hover) - Styling & Font */
+        .plyr__tooltip {
+            background: var(--main-orange) !important;
+            color: #000 !important;
+            font-family: 'Poppins', sans-serif !important;
+            /* Force Poppins */
+            font-weight: 600;
+            border-radius: 4px;
+        }
+
+        /* 4. Current Time / Duration Text */
+        .plyr__time {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+        }
+
+        /* Fix for YouTube/HLS filling the container */
+        #player,
+        .plyr {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .embed-frame {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+            background: #000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="player-container" id="player-container">
+        <video id="player" playsinline crossorigin></video>
+    </div>
+
+    <script src="supabase-client.js"></script>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('player-container');
+            if (!container) return;
+
+            const playerConfig = {
+                controls: [
+                    'play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'
+                ],
+                ratio: '16:9',
+                keyboard: { focused: true, global: true },
+                tooltips: { controls: true, seek: true },
+                fullscreen: { enabled: true, fallback: true, iosNative: true, container }
+            };
+
+            // Get movie ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const movieId = urlParams.get('id') || 'telusu-kada';
+
+            // Fetch movie from Supabase
+            const movie = await fetchMovieById(movieId);
+
+            const source = (movie && movie.video_source) ? movie.video_source : "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
+
+            const normalizeSourceUrl = (value) => {
+                const rawValue = (value || '').trim();
+                if (!rawValue) return '';
+
+                const iframeMatch = rawValue.match(/src\s*=\s*["']([^"']+)["']/i);
+                const extractedSource = iframeMatch ? iframeMatch[1] : rawValue;
+
+                return extractedSource
+                    .replace(/&amp;/gi, '&')
+                    .replace(/^\/\//, 'https://')
+                    .trim();
+            };
+
+            // Robust YouTube ID extraction
+            const getYouTubeId = (url) => {
+                if (!url) return null;
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                const match = url.match(regExp);
+                return (match && match[2].length === 11) ? match[2] : null;
+            };
+
+            const normalizedSource = normalizeSourceUrl(source);
+            const videoId = getYouTubeId(normalizedSource);
+            const isHttpUrl = /^https?:\/\//i.test(normalizedSource);
+            const isM3u8Source = /\.m3u8(?:$|[?#])/i.test(normalizedSource) || normalizedSource.includes('m3u8');
+            const isDirectMediaFile = /\.(mp4|webm|ogg|m4v|mov|mkv)(?:$|[?#])/i.test(normalizedSource);
+            const shouldUseIframe = isHttpUrl
+                && !videoId
+                && !isM3u8Source
+                && !isDirectMediaFile;
+
+            const createVideoElement = (src = '') => {
+                container.innerHTML = `<video id="player" playsinline webkit-playsinline controls preload="metadata" crossorigin></video>`;
+                const video = document.getElementById('player');
+                if (src) {
+                    video.src = src;
+                }
+                video.setAttribute('playsinline', '');
+                video.setAttribute('webkit-playsinline', '');
+                video.setAttribute('controls', '');
+                return video;
+            };
+
+            const requestElementFullscreen = (element) => {
+                if (!element) return Promise.reject(new Error('No element available for fullscreen'));
+
+                const requestFullscreen =
+                    element.requestFullscreen ||
+                    element.webkitRequestFullscreen ||
+                    element.webkitEnterFullscreen ||
+                    element.msRequestFullscreen;
+
+                if (!requestFullscreen) {
+                    return Promise.reject(new Error('Fullscreen API unavailable'));
+                }
+
+                return Promise.resolve(requestFullscreen.call(element));
+            };
+
+            const wireMobilePlaybackFixes = (playerInstance, video) => {
+                if (!playerInstance || !video) return;
+
+                const ensurePlayback = () => {
+                    if (video.paused) {
+                        const playAttempt = video.play();
+                        if (playAttempt && typeof playAttempt.catch === 'function') {
+                            playAttempt.catch(() => { });
+                        }
+                    }
+                };
+
+                const bindOverlay = () => {
+                    const overlayButton = container.querySelector('.plyr__control--overlaid');
+                    if (!overlayButton || overlayButton.dataset.mobileBound === 'true') return;
+
+                    overlayButton.dataset.mobileBound = 'true';
+                    overlayButton.addEventListener('touchend', ensurePlayback, { passive: true });
+                    overlayButton.addEventListener('click', ensurePlayback);
+                };
+
+                playerInstance.on('ready', bindOverlay);
+                bindOverlay();
+
+                const fullscreenButton = container.querySelector('[data-plyr="fullscreen"]');
+                if (fullscreenButton && fullscreenButton.dataset.mobileFullscreenBound !== 'true') {
+                    fullscreenButton.dataset.mobileFullscreenBound = 'true';
+                    const openFullscreen = (event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        requestElementFullscreen(container).catch(() => requestElementFullscreen(video).catch(() => { }));
+                    };
+
+                    fullscreenButton.addEventListener('touchend', openFullscreen, { passive: false });
+                    fullscreenButton.addEventListener('click', openFullscreen);
+                }
+            };
+
+            if (videoId) {
+                // For YouTube, Plyr works best with a div
+                container.innerHTML = `<div id="player" data-plyr-provider="youtube" data-plyr-embed-id="${videoId}"></div>`;
+                window.player = new Plyr('#player', playerConfig);
+            } else if (shouldUseIframe) {
+                container.innerHTML = `<iframe class="embed-frame" src="${normalizedSource}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+            } else if (Hls.isSupported() && isM3u8Source) {
+                const video = createVideoElement();
+                const hls = new Hls();
+                hls.loadSource(normalizedSource);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    window.player = new Plyr(video, playerConfig);
+                    wireMobilePlaybackFixes(window.player, video);
+                });
+            } else if (isM3u8Source) {
+                const video = createVideoElement(normalizedSource);
+                window.player = new Plyr(video, playerConfig);
+                wireMobilePlaybackFixes(window.player, video);
+            } else {
+                const video = createVideoElement(normalizedSource);
+                window.player = new Plyr(video, playerConfig);
+                wireMobilePlaybackFixes(window.player, video);
+            }
+        });
+    </script>
+</body>
+
+</html>

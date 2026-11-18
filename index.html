@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Peppam.tv - Your Movie Hub</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <a href="/" class="logo" style="text-decoration: none;">
+                <h1><span class="peppam">Peppam</span><span class="tv">.tv</span></h1>
+            </a>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+                <form class="search-bar" id="search-form">
+                    <input type="search" id="search-input" placeholder="Search for movies...">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
+    </header>
+    <section class="hero-section">
+        <h2 class="hero-title"><span class="hero-p">P</span> for... Peppam</h2>
+        <p class="hero-tagline">Watch Telugu Movies In HD, exclusively available on peppam.tv
+            <br>Design and Developed by <span class="peppam-batch">Peppam Batch</span>
+        </p>
+    </section>
+
+    <main>
+        <section class="movie-grid" id="movie-grid">
+            <!-- Movies will be loaded here dynamically by Supabase -->
+            <div class="loading-spinner">Loading movies...</div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Peppam.tv. All rights reserved.</p>
+    </footer>
+
+    <!-- Supabase Library -->
+
+
+    <script src="devtools-block.js"></script>
+    <script src="supabase-client.js"></script>
+    <script src="script.js"></script>
+
+
+    <script>
+        // Load movie grid from Supabase
+        async function loadMovieGrid() {
+            const movieGrid = document.getElementById('movie-grid');
+            const movies = await fetchAllMovies();
+            if (movies.length === 0) {
+                const errorMessage = window.__peppamLastApiError || 'Unable to load movies.';
+                movieGrid.innerHTML = `<p class="error-message">${errorMessage}</p>`;
+                return;
+            }
+
+            movieGrid.innerHTML = movies.map(movie => `
+                <a href="movie-detail.html?id=${movie.id}" class="movie-card-link">
+                    <div class="movie-card">
+                        <div class="thumbnail-container">
+                            <img src="${movie.poster}" alt="${movie.title} Poster">
+                        </div>
+                        <div class="card-info">
+                            <h3 class="movie-title">${movie.title}</h3>
+                        </div>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', loadMovieGrid);
+    </script>
+</body>
+
+</html>
