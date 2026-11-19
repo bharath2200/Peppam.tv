@@ -326,14 +326,14 @@
             overflow: hidden !important;
         }
 
-        /* Kill any fixed-width table the ad injects */
+        /* Kill fixed-width table the ad injects — 2x2 grid */
         #container-91f9510d691261ad561d835e8a6dbc4e table,
         #container-91f9510d691261ad561d835e8a6dbc4e tbody,
         #container-91f9510d691261ad561d835e8a6dbc4e tr {
             width: 100% !important;
             display: grid !important;
-            grid-template-columns: repeat(4, 1fr) !important;
-            gap: 10px !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 12px !important;
             border: none !important;
             margin: 0 !important;
             padding: 0 !important;
@@ -345,11 +345,11 @@
             min-width: 0 !important;
             box-sizing: border-box !important;
             text-align: center !important;
-            padding: 6px 4px !important;
+            padding: 10px 8px !important;
             vertical-align: top !important;
             border: none !important;
             background: #1a1a1a !important;
-            border-radius: 8px !important;
+            border-radius: 10px !important;
         }
 
         #container-91f9510d691261ad561d835e8a6dbc4e img {
@@ -357,7 +357,7 @@
             height: auto !important;
             max-width: 100% !important;
             display: block !important;
-            border-radius: 6px !important;
+            border-radius: 8px !important;
             object-fit: cover !important;
         }
 
@@ -365,22 +365,32 @@
         #container-91f9510d691261ad561d835e8a6dbc4e span,
         #container-91f9510d691261ad561d835e8a6dbc4e div {
             color: #ff6600 !important;
-            font-size: 12px !important;
+            font-size: 13px !important;
             font-family: 'Poppins', sans-serif !important;
             word-break: break-word !important;
             white-space: normal !important;
             overflow: visible !important;
             width: 100% !important;
             display: block !important;
-            line-height: 1.4 !important;
-            margin-top: 6px !important;
+            line-height: 1.5 !important;
+            margin-top: 8px !important;
         }
 
+        /* Mobile: stays 2 columns, just tighter gap */
         @media (max-width: 600px) {
             #container-91f9510d691261ad561d835e8a6dbc4e table,
             #container-91f9510d691261ad561d835e8a6dbc4e tbody,
             #container-91f9510d691261ad561d835e8a6dbc4e tr {
                 grid-template-columns: repeat(2, 1fr) !important;
+                gap: 8px !important;
+            }
+            #container-91f9510d691261ad561d835e8a6dbc4e td {
+                padding: 8px 6px !important;
+            }
+            #container-91f9510d691261ad561d835e8a6dbc4e a,
+            #container-91f9510d691261ad561d835e8a6dbc4e span,
+            #container-91f9510d691261ad561d835e8a6dbc4e div {
+                font-size: 12px !important;
             }
         }
 
