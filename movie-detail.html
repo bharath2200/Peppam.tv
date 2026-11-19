@@ -11,6 +11,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 
+    <!-- Popunder Ad: fires on first user interaction (play button click triggers it) -->
+    <script data-cfasync="false" src="https://aarems.org/1/a8a3076dbfe4c6e23b70b4dd70eb7873"></script>
+
     <link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
     <!-- HLS.js for native HLS support -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
@@ -309,6 +312,27 @@
             background: #000;
         }
 
+        /* ── Native Banner Ad ── */
+        .native-banner-wrap {
+            width: 100%;
+            margin: 20px 0;
+            color: #ff6600;
+            font-size: inherit;
+        }
+        /* 4-col on desktop, 2-col on mobile */
+        #container-91f9510d691261ad561d835e8a6dbc4e {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 10px !important;
+            color: #ff6600 !important;
+            font-size: inherit !important;
+        }
+        @media (max-width: 600px) {
+            #container-91f9510d691261ad561d835e8a6dbc4e {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
         /* Language Switcher */
         #lang-switcher {
             display: none;
@@ -472,18 +496,10 @@
             </p>
         </div>
 
-        <!-- Banner – Under Synopsis: 468 × 60 -->
-        <div class="ad-banner-top-468" style="margin-top: 16px;">
-            <div class="ad-wrap-468">
-                <iframe
-                    srcdoc="<!DOCTYPE html><html><head><meta charset='utf-8'><style>body{margin:0;padding:0;overflow:hidden;background:transparent;display:flex;justify-content:center;align-items:center;}</style></head><body><script>atOptions={'key':'bbf2f1140fcd2ac9c1bd9235e25aef38','format':'iframe','height':60,'width':468,'params':{}};</script><script src='https://bancadeltempoidea.org/22/bbf2f1140fcd2ac9c1bd9235e25aef38'></script></body></html>"
-                    width="468"
-                    height="60"
-                    frameborder="0"
-                    scrolling="no"
-                    style="border:0;width:468px;height:60px;overflow:hidden;display:block;">
-                </iframe>
-            </div>
+        <!-- Native Banner Ad – Under Synopsis -->
+        <div class="native-banner-wrap">
+            <script async="async" data-cfasync="false" src="https://bancadeltempoidea.org/21/91f9510d691261ad561d835e8a6dbc4e"></script>
+            <div id="container-91f9510d691261ad561d835e8a6dbc4e"></div>
         </div>
 
         <div class="streaming-info">
