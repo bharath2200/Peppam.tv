@@ -315,21 +315,78 @@
         /* ── Native Banner Ad ── */
         .native-banner-wrap {
             width: 100%;
-            margin: 20px 0;
-            color: #ff6600;
-            font-size: inherit;
+            margin: 24px 0;
         }
-        /* 4-col on desktop, 2-col on mobile */
+
+        /* Force the ad container to be a proper responsive grid */
         #container-91f9510d691261ad561d835e8a6dbc4e {
-            display: grid !important;
-            grid-template-columns: repeat(4, 1fr) !important;
-            gap: 10px !important;
-            color: #ff6600 !important;
-            font-size: inherit !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
         }
+
+        /* Target ad card items inside the native container */
+        #container-91f9510d691261ad561d835e8a6dbc4e > * {
+            box-sizing: border-box !important;
+        }
+
+        /* Desktop: 4 columns — let the ad script use full width */
+        @media (min-width: 601px) {
+            #container-91f9510d691261ad561d835e8a6dbc4e {
+                display: grid !important;
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 12px !important;
+            }
+            #container-91f9510d691261ad561d835e8a6dbc4e > * {
+                width: 100% !important;
+                min-width: 0 !important;
+            }
+            #container-91f9510d691261ad561d835e8a6dbc4e img {
+                width: 100% !important;
+                height: auto !important;
+                display: block !important;
+                border-radius: 6px !important;
+            }
+            #container-91f9510d691261ad561d835e8a6dbc4e a {
+                display: block !important;
+                width: 100% !important;
+                color: #ff6600 !important;
+                font-size: 13px !important;
+                font-family: 'Poppins', sans-serif !important;
+                text-align: center !important;
+                word-break: break-word !important;
+                overflow: visible !important;
+                white-space: normal !important;
+            }
+        }
+
+        /* Mobile: 2 columns, full width cards */
         @media (max-width: 600px) {
             #container-91f9510d691261ad561d835e8a6dbc4e {
+                display: grid !important;
                 grid-template-columns: repeat(2, 1fr) !important;
+                gap: 10px !important;
+            }
+            #container-91f9510d691261ad561d835e8a6dbc4e > * {
+                width: 100% !important;
+                min-width: 0 !important;
+            }
+            #container-91f9510d691261ad561d835e8a6dbc4e img {
+                width: 100% !important;
+                height: auto !important;
+                display: block !important;
+                border-radius: 6px !important;
+            }
+            #container-91f9510d691261ad561d835e8a6dbc4e a {
+                display: block !important;
+                width: 100% !important;
+                color: #ff6600 !important;
+                font-size: 12px !important;
+                font-family: 'Poppins', sans-serif !important;
+                text-align: center !important;
+                word-break: break-word !important;
+                overflow: visible !important;
+                white-space: normal !important;
             }
         }
 
